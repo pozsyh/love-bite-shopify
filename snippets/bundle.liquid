@@ -1,0 +1,293 @@
+{% if product.metafields.custom.bundle != blank %}
+  {% assign all_products_available = true %}
+  {% for bundle_product in product.metafields.custom.bundle.value %}
+    {% if bundle_product.selected_or_first_available_variant.inventory_quantity == 0 %}
+      {% assign all_products_available = false %}
+    {% endif %}
+  {% endfor %}
+
+  {% if all_products_available and product.available and product.selected_or_first_available_variant.inventory_quantity > 0 %}
+    <div class="bundle_wrapper">
+      <div id="popup" class="popup">Bundle successfully added to your cart!</div>
+      <div>
+        <p class="bundle_title">Frequently bought together</p>
+      </div>
+      <div class="bundle">
+        <form class="configurator-form" method="post">
+          <ul class="bundle-items-list">
+            <li class="bundle-item">
+              <a class="bundle-item-anchor" href="{{ product.url }}">
+                <div class="bundle-item-img-wrapper">
+                  <img
+                    class="bundle-item_image"
+                    src="{{ product.featured_image | img_url: 'original' }}"
+                    alt="{{ product.title }}">
+                </div>
+                <div class="bundle-item_title">{{ product.title }}</div>
+                <div class="bundle-item_price">{{ product.price | money }}</div>
+              </a>
+              <select
+                class="bundle-variant-select"
+                name="bundle-{{ product.id }}"
+                data-product-id="{{ product.id }}">
+                {% for variant in product.variants %}
+                  {% if variant.available %}
+                    <option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </li>
+
+            {% for bundle_product in product.metafields.custom.bundle.value %}
+              {% if bundle_product != product and bundle_product.available %}
+                <li class="bundle-item">
+                  <a class="bundle-item-anchor" href="{{ bundle_product.url }}">
+                    <div class="bundle-item-img-wrapper">
+                      <img
+                        class="bundle-item_image"
+                        src="{{ bundle_product.featured_image | img_url: 'original' }}"
+                        alt="{{ bundle_product.title }}">
+                    </div>
+                    <div class="bundle-item_title">{{ bundle_product.title }}</div>
+                    <div class="bundle-item_price">{{ bundle_product.price | money }}</div>
+                  </a>
+                  <select
+                    class="bundle-variant-select"
+                    name="bundle-{{ bundle_product.id }}"
+                    data-product-id="{{ bundle_product.id }}">
+                    {% for variant in bundle_product.variants %}
+                      {% if variant.available %}
+                        <option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+          <div class="bundle-total-price">Total: {{ total_bundle_price | money }}</div>
+          <div class="bundle-summary">
+            <input
+              class="bundle-addtocart-btn"
+              type="button"
+              value="ADD BUNDLE TO CART">
+          </div>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+{% endif %}
+
+<style>
+  .bundle_wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .bundle_title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .bundle-items-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+  }
+
+  .bundle-item {
+    flex: 1 1 calc(50% - 20px);
+
+    background-color: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+  .bundle-item-img-wrapper {
+    margin-bottom: 10px;
+  }
+
+  .bundle-item_image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .bundle-item_title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .bundle-item_price {
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+  }
+
+  .bundle-variant-select {
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  .bundle-total-price {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+  }
+
+  .bundle-summary {
+    margin-top: 20px;
+    text-align: right;
+  }
+
+  .bundle-addtocart-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .bundle-addtocart-btn:hover {
+    background-color: #0056b3;
+  }
+
+  .popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 4px;
+    display: none;
+    z-index: 9999;
+  }
+
+  .fade-in {
+    display: block;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+  }
+
+  .fade-out {
+    animation: fadeOut 0.5s forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  document.querySelector(".bundle-addtocart-btn").addEventListener("click", async () => {
+    const productData = [];
+    let hasError = false;
+
+    // Збираємо дані з форми
+    document.querySelectorAll("select.bundle-variant-select").forEach((select) => {
+      const variantId = select.value;
+      const quantity = 1; // або отримати кількість з форми, якщо є
+
+      // Перевірка на наявність вибраного варіанту
+      if (variantId) {
+        productData.push({
+          id: variantId,
+          quantity: quantity,
+        });
+      } else {
+        hasError = true;
+        console.error("Variant ID is missing for a product.");
+      }
+    });
+
+    // Якщо є помилка, не надсилаємо запит
+    if (hasError) {
+      alert("Please select valid options for all products.");
+      return;
+    }
+
+    const requestBody = {
+      items: productData,
+    };
+
+    try {
+      const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        const res = await fetch("/cart.json");
+        const cart = await res.json();
+
+        let cartCountElements = document.querySelectorAll(".header__icon--cart .cart-count-bubble");
+        if (cartCountElements.length === 0) {
+          const cartIcon = document.querySelector(".header__icon--cart");
+          if (cartIcon) {
+            const cartCountBubble = document.createElement("span");
+            cartCountBubble.classList.add("cart-count-bubble");
+            cartIcon.appendChild(cartCountBubble);
+            cartCountElements = [cartCountBubble];
+          }
+        }
+        cartCountElements.forEach((el) => {
+          el.textContent = cart.item_count;
+        });
+
+        const popup = document.getElementById("popup");
+        popup.style.display = "block";
+        popup.classList.remove("fade-out");
+        popup.classList.add("fade-in");
+
+        setTimeout(() => {
+          popup.classList.remove("fade-in");
+          popup.classList.add("fade-out");
+          setTimeout(() => {
+            popup.style.display = "none";
+          }, 500);
+        }, 2000);
+      } else {
+        const error = await response.json();
+        console.error("Failed to add bundle to cart:", error.message);
+      }
+    } catch (error) {
+      console.error("Error adding bundle to cart:", error);
+    }
+  });
+</script>

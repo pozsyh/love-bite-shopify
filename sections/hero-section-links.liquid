@@ -1,0 +1,75 @@
+<div class="hero-section">
+  <div class="hero-block">
+    {% for block in section.blocks %}
+      <div class="hero-item">
+        <img src="{{ block.settings.image_block | img_url: 'master' }}" alt="{{ block.settings.image_alt_text }}">
+        <h2>{{ block.settings.title }}</h2>
+        <p>{{ block.settings.subtitle }}</p>
+        <a href="{{ block.settings.button_link }}" class="btn">{{ block.settings.button_text }}</a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Hero Section Links",
+    "tag": "section",
+    "class": "hero-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "section_title",
+        "label": "Section Title",
+        "default": "Our Products"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "hero-block",
+        "name": "Hero Block",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image_block",
+            "label": "Image Block"
+          },
+          {
+            "type": "text",
+            "id": "image_alt_text",
+            "label": "Alt Text for Image",
+            "default": "Default Alt Text"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Product Title"
+          },
+          {
+            "type": "text",
+            "id": "subtitle",
+            "label": "Subtitle",
+            "default": "Product Subtitle"
+          }, {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button Link",
+            "default": ""
+          }, {
+            "type": "text",
+            "id": "button_text",
+            "label": "Button Text",
+            "default": "Shop Now"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Hero Section with Links",
+        "category": "Custom"
+      }
+    ]
+  }
+{% endschema %}
