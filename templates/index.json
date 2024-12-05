@@ -21,6 +21,7 @@
         },
         "text_prPTWH": {
           "type": "text",
+          "disabled": true,
           "settings": {
             "text": "A Wholesome Treat Craftedwith Love and Tradition.",
             "text_style": "body"
